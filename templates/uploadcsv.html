@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload</title>
+</head>
+<body>
+<h1>Upload File</h1>
+
+		<br>
+		<h2> Shehzad ul Islam - 1001555356</h2>
+		<br>
+<form id="upload_form_csv" action="{{ url_for('uploadCSV') }}" method="POST" enctype="multipart/form-data">
+    <h3>CSV Upload</h3>
+    <input type="file" accept="text/csv/*" name="file" multiple>
+    <input type="submit" value="upload">
+</form>
+     <h2> <a href = "/">Home</a> </h2>
+</body>
+</html>

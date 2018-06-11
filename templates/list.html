@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+
+   <body>
+
+   <center>
+      <header> <h1> This page lists the vehicle records </h1>
+      </header>
+      <br>
+      <h2> Shehzad ul Islam - 1001555356</h2>
+      <br>
+      <br> <br>
+      <table border = 1>
+         <thead>
+            <td>Name</td>
+            <td>Grade</td>
+            <td>Room</td>
+            <td>Telnum</td>
+            <td>Picture</td>
+            <td>Keywords</td>
+         </thead>
+
+         {% for row in rows %}
+         <tr>
+            <td>{{row[0]}}</td>
+            <td>{{row[1]}}</td>
+            <td>{{row[2]}}</td>
+            <td>{{row[3]}}</td>
+            <td>{{row[4]}}</td>
+            <td>{{row[5]}}</td>
+         </tr>
+         {% endfor %}
+      </table>
+
+      <br>
+      <h2> <a href = "/">Home</a> </h2>
+   </body>
+</html>
