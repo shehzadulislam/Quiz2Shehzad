@@ -3,7 +3,7 @@
 import os
 import csv
 import sqlite3
-import pandas as pd
+# import pandas as pd
 import datetime
 # import pandas_datareader.data as web
 from sqlite3 import Error
@@ -39,17 +39,17 @@ def create_table(conn, create_table_sql):
     except Error as e:
         print(e)
 
-def readcsvinsertdata(conn,filename):
-    with open(filename, 'r') as csvfile:
-        df = pd.read_csv(csvfile)
+# def readcsvinsertdata(conn,filename):
+#     with open(filename, 'r') as csvfile:
+        # df = pd.read_csv(csvfile)
 
-        df.columns = df.columns.str.strip()
+        # df.columns = df.columns.str.strip()
         # cur = conn.cursor()
 
         # cur.execute('SELECT * FROM People')
         # rows = cur.fetchall()
         # if len(rows) == 0:
-        df.to_sql('Earthquakes', conn, if_exists='append', index=False)
+        # df.to_sql('Earthquakes', conn, if_exists='append', index=False)
         # readCSV = csv.reader(csvfile, delimiter=',')
         # next(readCSV)
         # cur = conn.cursor()
@@ -60,9 +60,9 @@ def readcsvinsertdata(conn,filename):
         #         conn.execute("INSERT INTO classes ( ID,Days, Start, End, Approval ,Max ,Current ,Seats ,Wait ,Instructor ,Course,Section ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", (row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11]))
         #     conn.commit()
 
-def main():
-    database = "Quiz2.db"
-    conn = create_connection(database)
+# def main():
+#     database = "Quiz2.db"
+#     conn = create_connection(database)
     # sql_create_courses_table = """ CREATE TABLE IF NOT EXISTS classes (
     #                                     ID integer,
     #                                     Days text,
@@ -105,13 +105,13 @@ def uploadCSV():
         file.save(destination)
 
         # create a database connection
-    conn = create_connection("Quiz2.db")
-    if conn is not None:
-            # create table
-            # create_table(conn, sql_create_courses_table)
-        readcsvinsertdata(conn,file.filename)
-    else:
-        print("Error! cannot create the database connection.")
+    # conn = create_connection("Quiz2.db")
+    # if conn is not None:
+    #         # create table
+    #         # create_table(conn, sql_create_courses_table)
+    #     # readcsvinsertdata(conn,file.filename)
+    # else:
+    #     print("Error! cannot create the database connection.")
 
     return render_template("complete.html")
 
@@ -152,16 +152,24 @@ def search():
 
 @app.route('/magnitude', methods=['POST'])
 def grmag():
-    Mag = request.form['mag']
+    loc = request.form['location']
+    print(loc)
+    mag = request.form['magnitude']
+    print(mag)
     conn = sqlite3.connect("Quiz2.db")
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
-    cursor.execute('Select mag from Earthquakes where mag > ?', (Mag,))
+    cursor.execute('Select time,latitude,longitude,place from Earthquakes where mag > ? AND locationSource = ? AND ((magNst*2) >= nst)', (mag,loc,))
+    # cursor.execute('Select time,latitude,longitude,place from Earthquakes where locationSource = ? AND ((magNst*2) >= nst)', (loc,))
     rows = cursor.fetchall()
+    # cursor.execute('Select gap from Earthquakes where gap < ?', (gapfrom,))
+    # below = cursor.fetchall()
+    # cursor.execute('Select gap from Earthquakes where gap > ?', (gapto,))
+    # above = cursor.fetchall()
     return render_template('result.html', row = rows, number = len(rows))
 
 if __name__ == '__main__':
-    main()
+    # main()
     app.run(debug=True)
 
 
