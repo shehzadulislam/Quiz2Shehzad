@@ -256,7 +256,7 @@ def randomqueries():
     #         inside = inside + 1
     #         mc.get(key)
 
-PORT = int(os.getenv('PORT'))
+# PORT = int(os.getenv('PORT'))
 if __name__ == '__main__':
     # main()
     app.run(debug=True)
