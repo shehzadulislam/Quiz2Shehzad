@@ -8,7 +8,7 @@ import datetime
 import time
 import random
 from sqlite3 import Error
-from ibmdbpy import IdaDataBase, IdaDataFrame
+# from ibmdbpy import IdaDataBase, IdaDataFrame
 
 
 from flask import Flask, render_template, request
