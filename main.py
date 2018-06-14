@@ -6,9 +6,9 @@ import sqlite3
 import pandas as pd
 import datetime
 import time
-import random
+# import random
 from sqlite3 import Error
-# from ibmdbpy import IdaDataBase, IdaDataFrame
+import memcache
 
 
 from flask import Flask, render_template, request
@@ -80,6 +80,7 @@ def readcsvinsertdata(conn,filename):
     #                                     Course text,
     #                                     Section text
     #                                 ); """
+
 
 @app.route('/')
 def home():
@@ -175,28 +176,179 @@ def grmag():
 def randomquery():
     return render_template('performancemeasure.html')
 
+@app.route('/randommemquery')
+def randommemquery():
+    return render_template('performancemeasuremem.html')
+
+
 @app.route('/random', methods=['POST'])
 def randomqueries():
     numberofqueries = request.form['number']
     conn = sqlite3.connect("Assignment3.db")
+    # coll =[]
+    # starttime = time.time()
+    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
-    starttime = time.time()
-    for loop in range(1, int(numberofqueries) + 1):
-        randnum = random.randrange(0,100)
-        print(randnum)
-        cursor.execute('Select time from Earthquakes where mag >= ?', (randnum,))
-        data = cursor.fetchall()
-        print(randnum)
-    endtime = time.time()
-    diff = endtime - starttime
-    print(diff)
-    return render_template('performancemeasure.html', time = diff)
+    cursor.execute('Delete from Earthquakes where rms <= ?', (numberofqueries,))
+    # for loop in range(1, int(numberofqueries) + 1):
+    #     randnum = random.randrange(0,10)
+    #     magnitude = int(randnum)
+    #     cursor.execute('Select time from Earthquakes where mag >= ?', (magnitude,))
+    #     data = cursor.fetchall()
+    # endtime = time.time()
+    # diff = endtime - starttime
+    # loop = 0
+    return render_template('performancemeasure.html')
+
+# @app.route('/randommem', methods=['POST'])
+# def randommemqueries():
+#     conn = sqlite3.connect("Assignment3.db")
+#     cursor = conn.cursor()
+#     mc = memcache.Client(['127.0.0.1:11211'], debug=1)
+#     numberofqueries = request.form['number']
+#     start_time = time.time()
+#     for loop in range(1, int(numberofqueries) + 1):
+#         randnum = random.randrange(0,10)
+#         query = 'Select time from Earthquakes where mag >= ?', (randnum,)
+#         key = str(query)
+#         value = mc.get(key)
+#         if value is None:
+#             statement = sqlite3.prepare(conn, query)
+#             cursor.execute(statement)
+#             rows = []
+#             #obtaining the results
+#             data = cursor.fetchone()
+#             while res != False:
+#                  rows.append(data)
+#                  res = cursor.fetchone()
+#             result = " "
+#             for i in rows:
+#                result += str(i)
+#             status = mc.set(key, result)
+#         else:
+#                 inside = inside + 1
+#                 mc.get(key)
+#     end_time = time.time()
+#     diff = end_time - start_time
+#     return render_template('performancemeasuremem.html', totaltime = diff)
+    # conn = sqlite3.connect("Assignment3.db")
+    # cursor = conn.cursor()
+    # mc = memcache.Client(['127.0.0.1:11211'], debug=1)
+    # numberofqueries = request.form['number']
+    # val = numberofqueries
+    # start_time = time.time()
+    # inside = 0
+    # for loop in range(1, int(numberofqueries) + 1):
+    #     query = "select mag from Earthquakes"
+    #     key = query.replace(' ', '')
+    #     value = mc.get(key)
+    #     if value is None:
+    #         statement = query
+    #         cursor.execute(statement)
+    #         rows = []
+    #         # obtaining the results
+    #         res = cursor.fetchall()
+    #         result = " "
+    #         for i in res:
+    #             result += str(i)
+    #         status = mc.set(key, result)
+    #     else:
+    #         inside = inside + 1
+    #         mc.get(key)
 
 PORT = int(os.getenv('PORT','5000'))
 if __name__ == '__main__':
     # main()
     app.run(debug=True)
 
+# import os
+# import random
+# import memcache
+# from flask import Flask, redirect, render_template, request
+# from time import time
+# import json
+# import ibm_db
+#
+# # _name_ is set to the name of the current class, function, method, descriptor, or generator instance.
+# app = Flask(_name_)
+# memc = memcache.Client(['127.0.0.1:11211'], debug = 1)
+#
+# dataset=['ak','ci','hv','ismp','ld','mb','nc','nm','nn','ott','pr','se','tul','us','uu','uw']
+#
+# # get service information if on IBM Cloud Platform
+# if 'VCAP_SERVICES' in os.environ:
+#     db2info = json.loads(os.environ['VCAP_SERVICES'])['dashDB For Transactions'][0]
+#     db2cred = db2info["credentials"]
+#     appenv = json.loads(os.environ['VCAP_APPLICATION'])
+# else:
+#     # raise ValueError('Expected cloud environment')
+#     with open('connections.json') as new_file_db:
+#         new_file = json.load(new_file_db)
+#         db2info = new_file['dashDB For Transactions'][0]
+#         db2cred = db2info["credentials"]
+#
+# @app.route('/searchtwo', methods=['POST'])
+# def searchtwo():
+#
+#     conn = ibm_db.connect(
+#         "DATABASE=" + db2cred['db'] + ";HOSTNAME=" + db2cred['hostname'] + ";PORT=" + str(db2cred['port']) + ";UID=" +
+#         db2cred['username'] + ";PWD=" + db2cred['password'] + ";", "", "")
+#     if conn:
+#         # we have a Db2 connection, query the database
+#         selection = request.form['selection']
+#         if(selection=='location'):
+#             locsrc = request.form['loc']
+#
+# r = random.uniform(0.5, 6.0)
+# sequel = "select mag from equake where locationSource = ? "#and mag = ?"
+# # Note that for security reasons we are preparing the statement first,
+# statement = ibm_db.prepare(conn, sequel)
+# ibm_db.bind_param(statement, 1, location)
+# # ibm_db.bind_param(statement, 2, r)
+# ibm_db.execute(statement)
+
+# def memmagnitude(range1, range2,iteration):
+#     conn = ibm_db.connect(
+#         "DATABASE=" + db2cred['db'] + ";HOSTNAME=" + db2cred['hostname'] + ";PORT=" + str(db2cred['port']) + ";UID=" +
+#         db2cred['username'] + ";PWD=" + db2cred['password'] + ";", "", "")
+#     val = iteration
+#
+#     start_time = time()
+#     inside = 0
+#     count = 1
+#     while (count <= val):
+#         loc_query = "select mag from equake where mag between " + range1 + " and "+range2
+#         new_key = loc_query.replace(' ', '')
+#         value = memc.get(new_key)
+#         if value is None:
+#             print("first time put")
+#             statement = ibm_db.prepare(conn, loc_query)
+#             ibm_db.execute(statement)
+#             rows = []
+#             # obtaining the results
+#             res = ibm_db.fetch_assoc(statement)
+#             while res != False:
+#                 rows.append(res.copy())
+#                 res = ibm_db.fetch_assoc(statement)
+#
+#             result = " "
+#             for i in rows:
+#                 result += str(i)
+#
+#             status = memc.set(new_key, result)
+#
+#         else:
+#             inside = inside + 1
+#
+#             memc.get(new_key)
+#
+#         count = count + 1
+#     print(inside)
+#     end_time = time()
+#     print('end_time')
+#     total_sqltime = end_time - start_time
+#     print(total_sqltime)
+#     return render_template('view3.html', rows=total_sqltime)
 
 # @app.route('/addrec',methods = ['POST', 'GET'])
 # def addrec():
