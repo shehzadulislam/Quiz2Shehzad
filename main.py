@@ -8,7 +8,7 @@ import datetime
 import time
 # import random
 from sqlite3 import Error
-import memcache
+# import memcache
 
 
 from flask import Flask, render_template, request
