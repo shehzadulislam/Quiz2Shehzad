@@ -13,15 +13,21 @@
          <tr>
              <TH>Between</TH>
          <td>{{number}}</td>
-             <TH>Below</TH>
-         <td>{{below}}</td>
-             <TH>Above</TH>
-         <td>{{above}}</td>
+             <!--<TH>Below</TH>-->
+         <!--<td>{{below}}</td>-->
+             <!--<TH>Above</TH>-->
+         <!--<td>{{above}}</td>-->
          </tr>
          {% for r in row %}
          <tr>
-             <th>Mag</th>
+             <th>time</th>
             <td>{{r[0]}}</td>
+                          <th>latitude</th>
+            <td>{{r[1]}}</td>
+                          <th>longitude</th>
+            <td>{{r[2]}}</td>
+                          <th>Place</th>
+            <td>{{r[3]}}</td>
          </tr>
          {% endfor %}
 </table>
