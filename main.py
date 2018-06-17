@@ -6,9 +6,9 @@ import sqlite3
 import pandas as pd
 import datetime
 import time
-# import random
+import random
 from sqlite3 import Error
-# import memcache
+import memcache
 
 
 from flask import Flask, render_template, request
@@ -184,53 +184,58 @@ def randommemquery():
 @app.route('/random', methods=['POST'])
 def randomqueries():
     numberofqueries = request.form['number']
+    letter = request.form['letter']
+    print(numberofqueries)
+    print(letter)
     conn = sqlite3.connect("Assignment3.db")
     # coll =[]
-    # starttime = time.time()
+    starttime = time.time()
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
-    cursor.execute('Delete from Earthquakes where rms <= ?', (numberofqueries,))
-    # for loop in range(1, int(numberofqueries) + 1):
-    #     randnum = random.randrange(0,10)
-    #     magnitude = int(randnum)
-    #     cursor.execute('Select time from Earthquakes where mag >= ?', (magnitude,))
-    #     data = cursor.fetchall()
-    # endtime = time.time()
-    # diff = endtime - starttime
+    for loop in range(1, int(numberofqueries) + 1):
+        randnum = random.randrange(0,100)
+        state = "Select mag,net,id from Earthquakes where net like '%'" + "?" +"'%'" +" and mag >= ? ", (letter,randnum,)
+        print(state)
+        cursor.execute(state)
+        data = cursor.fetchall()
+        if loop == 1:
+            first = data
+    endtime = time.time()
+    diff = endtime - starttime
     # loop = 0
-    return render_template('performancemeasure.html')
+    return render_template('performancemeasure.html',data = first)
 
-# @app.route('/randommem', methods=['POST'])
-# def randommemqueries():
-#     conn = sqlite3.connect("Assignment3.db")
-#     cursor = conn.cursor()
-#     mc = memcache.Client(['127.0.0.1:11211'], debug=1)
-#     numberofqueries = request.form['number']
-#     start_time = time.time()
-#     for loop in range(1, int(numberofqueries) + 1):
-#         randnum = random.randrange(0,10)
-#         query = 'Select time from Earthquakes where mag >= ?', (randnum,)
-#         key = str(query)
-#         value = mc.get(key)
-#         if value is None:
-#             statement = sqlite3.prepare(conn, query)
-#             cursor.execute(statement)
-#             rows = []
-#             #obtaining the results
-#             data = cursor.fetchone()
-#             while res != False:
-#                  rows.append(data)
-#                  res = cursor.fetchone()
-#             result = " "
-#             for i in rows:
-#                result += str(i)
-#             status = mc.set(key, result)
-#         else:
-#                 inside = inside + 1
-#                 mc.get(key)
-#     end_time = time.time()
-#     diff = end_time - start_time
-#     return render_template('performancemeasuremem.html', totaltime = diff)
+@app.route('/randommem', methods=['POST'])
+def randommemqueries():
+    conn = sqlite3.connect("Assignment3.db")
+    cursor = conn.cursor()
+    mc = memcache.Client(['127.0.0.1:11211'], debug=1)
+    numberofqueries = request.form['number']
+    start_time = time.time()
+    for loop in range(1, int(numberofqueries) + 1):
+        randnum = random.randrange(0,10)
+        query = 'Select time from Earthquakes where mag >= ?', (randnum,)
+        key = str(query)
+        value = mc.get(key)
+        if value is None:
+            statement = sqlite3.prepare(conn, query)
+            cursor.execute(statement)
+            rows = []
+            #obtaining the results
+            data = cursor.fetchone()
+            while res != False:
+                 rows.append(data)
+                 res = cursor.fetchone()
+            result = " "
+            for i in rows:
+               result += str(i)
+            status = mc.set(key, result)
+        else:
+                inside = inside + 1
+                mc.get(key)
+    end_time = time.time()
+    diff = end_time - start_time
+    return render_template('performancemeasuremem.html', totaltime = diff)
     # conn = sqlite3.connect("Assignment3.db")
     # cursor = conn.cursor()
     # mc = memcache.Client(['127.0.0.1:11211'], debug=1)
